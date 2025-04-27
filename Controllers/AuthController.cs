@@ -20,19 +20,26 @@ namespace facetrackr_backend.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(User user)
+        public IActionResult Register(UserRegisterDto registerDto)
         {
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+            var user = new User
+            {
+                Name = registerDto.Name,
+                Email = registerDto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.PasswordHash),
+                Role = registerDto.Role
+            };
+
             _context.Users.Add(user);
             _context.SaveChanges();
             return Ok();
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User login)
+        public IActionResult Login(UserLoginDto loginDto)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == login.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(login.PasswordHash, user.PasswordHash))
+            var user = _context.Users.FirstOrDefault(u => u.Email == loginDto.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.PasswordHash, user.PasswordHash))
                 return Unauthorized();
 
             var token = _jwtService.GenerateToken(user);

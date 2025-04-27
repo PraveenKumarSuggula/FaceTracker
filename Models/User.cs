@@ -7,7 +7,8 @@
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Role { get; set; }  // Admin, Teacher, Student
+
+        // Navigation property
         public ICollection<AttendanceRecord> AttendanceRecords { get; set; }
     }
-
 }

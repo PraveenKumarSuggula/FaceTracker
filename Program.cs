@@ -1,4 +1,8 @@
 
+using facetrackr_backend.Data;
+using facetrackr_backend.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace facetrackr_backend
 {
     public class Program
@@ -8,6 +12,11 @@ namespace facetrackr_backend
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddDbContext<AttendanceContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<JwtService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
