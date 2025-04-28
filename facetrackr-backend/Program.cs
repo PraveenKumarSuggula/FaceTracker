@@ -1,7 +1,10 @@
-
 using facetrackr_backend.Data;
 using facetrackr_backend.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using facetrackr_backend.Hubs;
 
 namespace facetrackr_backend
 {
@@ -12,14 +15,41 @@ namespace facetrackr_backend
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddDbContext<AttendanceContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddSignalR();
             builder.Services.AddScoped<JwtService>();
+            builder.Services.AddSingleton<FaceRecognitionService>();
+
+            // JWT Authentication configuration
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();  // Required for SignalR!
+                });
+            });
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -33,9 +63,13 @@ namespace facetrackr_backend
             }
 
             app.UseHttpsRedirection();
-
+            
+            app.UseAuthentication();  
             app.UseAuthorization();
 
+            app.UseCors("CorsPolicy");
+
+            app.MapHub<VideoHub>("/videoHub").RequireAuthorization();
 
             app.MapControllers();
 
