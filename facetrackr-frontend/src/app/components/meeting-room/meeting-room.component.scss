@@ -1,0 +1,58 @@
+.meeting-room-container {
+    text-align: center;
+    margin-top: 40px;
+  
+    h1 {
+      color: #673ab7;
+      margin-bottom: 20px;
+    }
+  
+    video {
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+  
+    .controls {
+      margin: 20px;
+    }
+  
+    .btn {
+      margin: 10px;
+      padding: 10px 25px;
+      background-color: #673ab7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+  
+      &.end {
+        background-color: #e53935;
+      }
+  
+      &.join {
+        background-color: #4caf50;
+      }
+  
+      &.secondary {
+        background-color: #607d8b;
+      }
+  
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  .meeting-id {
+    font-size: 18px;
+    color: #00796b;
+    margin-bottom: 15px;
+  }
+  
+  video, canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }

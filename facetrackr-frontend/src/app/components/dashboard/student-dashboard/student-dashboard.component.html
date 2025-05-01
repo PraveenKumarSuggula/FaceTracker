@@ -1,0 +1,11 @@
+<div class="dashboard-container">
+    <h1>Welcome Student</h1>
+    <p>Enter the meeting ID shared by your teacher to join.</p>
+  
+    <input [(ngModel)]="meetingId" class="input" placeholder="Enter Meeting ID" />
+    <button class="btn" (click)="joinMeeting()">Join Meeting</button>
+  
+    <br /><br />
+    <button class="btn secondary" (click)="logout()">Logout</button>
+  </div>
+  

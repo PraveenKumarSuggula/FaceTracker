@@ -1,0 +1,37 @@
+<div class="meeting-room-container">
+    <h1>Meeting Room - {{ meetingId || 'Live' }}</h1>
+
+    <div style="position: relative; width: 640px; height: 480px;">
+        <video id="video" width="640" autoplay muted></video>
+        <canvas id="overlay" width="640" height="480" style="position:absolute; top:0; left:0;"></canvas>        
+      </div>
+    
+      <p *ngIf="lastConfidence">
+        Matched: <strong>{{ matchedName }}</strong><br />
+        Confidence: 
+        <span [ngStyle]="{
+          color: lastConfidence >= 80 ? 'green' :
+                 lastConfidence >= 50 ? 'orange' : 'red'
+        }">
+          {{ lastConfidence }}%
+        </span>
+      </p>
+      
+    <div class="controls">
+      <ng-container *ngIf="role === 'Teacher' || role === 'Admin'">
+        <button class="btn" (click)="startMeeting()" *ngIf="!isMeetingStarted">Start Meeting</button>
+        <button class="btn end" (click)="endMeeting()" *ngIf="isMeetingStarted">End Meeting</button>
+      </ng-container>
+  
+      <ng-container *ngIf="role === 'Student'">
+        <button class="btn" (click)="registerFace()" *ngIf="!faceRegistered">Register Face</button>
+        <button class="btn join" (click)="joinMeeting()" *ngIf="faceRegistered && !isStudentJoined">Join Meeting</button>
+      </ng-container>
+    </div>
+  
+    <h1>Meeting Room - {{ meetingId || 'Not Started' }}</h1>
+    <p *ngIf="meetingId" class="meeting-id">Meeting ID: <strong>{{ meetingId }}</strong></p>
+
+    <button class="btn secondary" (click)="exitMeeting()">Exit</button>
+  </div>
+  
